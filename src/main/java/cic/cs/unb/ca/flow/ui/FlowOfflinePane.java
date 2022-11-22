@@ -23,8 +23,9 @@ import java.util.concurrent.Executors;
 
 public class FlowOfflinePane extends JPanel{
     enum TimeUnits{
-        MS("ms", 1L),
-        S("s", 1000L);
+        MICROSECOND("micros", 1L),
+        MS("ms", 1000L),
+        S("s", 1000000L);
         private final String displayName;
         private final Long factor;
 
@@ -32,19 +33,18 @@ public class FlowOfflinePane extends JPanel{
             this.displayName = displayName;
             this.factor = factor;
         }
-
-        public String getDisplayName() {
+        @Override
+        public String toString() {
             return displayName;
         }
 
-        public Long toMilliSecond(Long value){
+        public Long toMicroseconds(Long value){
             return this.factor * value;
         }
     }
 
     protected static final Logger logger = LoggerFactory.getLogger(FlowOfflinePane.class);
 
-    private static final String UNITS[] = {"ms", "s"};
     private static final Border PADDING = BorderFactory.createEmptyBorder(10,5,10,5);
     private JFileChooser fileChooser;
     private PcapFileFilter pcapChooserFilter;
@@ -366,10 +366,10 @@ public class FlowOfflinePane extends JPanel{
         long flowTimeout;
         long activityTimeout;
         try {
-            flowTimeout = Long.parseLong(flowTimeoutTxt.getText());
+            flowTimeout = extractMicroseconds(flowTimeoutTxt, flowTimeoutUnitCombo);
+
             activityTimeout = Long.parseLong(activityTimeoutTxt.getText());
 
-            flowTimeout = TimeUnits.values()[flowTimeoutUnitCombo.getSelectedIndex()].toMilliSecond(flowTimeout);
 
             Map<String, Long> flowCnt = new HashMap<>();
 
@@ -430,5 +430,10 @@ public class FlowOfflinePane extends JPanel{
             logger.info("startRead: {}",e.getMessage());
             JOptionPane.showMessageDialog(FlowOfflinePane.this, "The parameter is not a number,please check and try again.", "Parameter error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private static long extractMicroseconds(JTextField valueField, JComboBox<TimeUnits> unitCombo) {
+        Long value = Long.parseLong(valueField.getText());
+        return TimeUnits.values()[unitCombo.getSelectedIndex()].toMicroseconds(value);
     }
 }

@@ -44,7 +44,7 @@ public class ReadPcapFileWorker extends SwingWorker<List<String>,String> {
         activityTimeout = 5000000L;
     }
 
-    public ReadPcapFileWorker(File inputFile, String outPutDir,long param1,long param2) {
+    public ReadPcapFileWorker(File inputFile, String outPutDir,long flowTimeout,long activityTimeout) {
         super();
         pcapPath = inputFile;
         outPutDirectory = outPutDir;
@@ -53,8 +53,8 @@ public class ReadPcapFileWorker extends SwingWorker<List<String>,String> {
         if(!outPutDirectory.endsWith(FILE_SEP)) {
             outPutDirectory = outPutDirectory + FILE_SEP;
         }
-        flowTimeout = param1;
-        activityTimeout = param2;
+        this.flowTimeout = flowTimeout;
+        this.activityTimeout = activityTimeout;
     }
 
     @Override
