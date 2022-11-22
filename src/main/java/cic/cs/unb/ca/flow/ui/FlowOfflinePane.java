@@ -33,10 +33,8 @@ public class FlowOfflinePane extends JPanel{
     private Vector<File> cmbInputEle;
     private Vector<File> cmbOutputEle;
 
-    private JComboBox<Long> param1;
-    private JComboBox<Long> param2;
-    private Vector<Long> param1Ele;
-    private Vector<Long> param2Ele;
+    private JTextField flowTimeoutTxt;
+    private JTextField activityTimeoutTxt;
 
     private Box progressBox;
     private JProgressBar fileProgress;
@@ -246,23 +244,19 @@ public class FlowOfflinePane extends JPanel{
         jPanel.setLayout(new BoxLayout(jPanel,BoxLayout.X_AXIS));
         jPanel.setBorder(PADDING);
 
-        JLabel lbl1 = new JLabel("Flow TimeOut:");
-        param1Ele = new Vector<>();
-        param1Ele.add(120000000L);
-        param1 = new JComboBox<>(param1Ele);
-        param1.setEditable(true);
+        JLabel flowTimeoutLabel = new JLabel("Flow TimeOut:");
+        flowTimeoutTxt = new JTextField("120000000");
+        flowTimeoutTxt.setEditable(true);
 
-        JLabel lbl2 = new JLabel("Activity Timeout:");
-        param2Ele = new Vector<>();
-        param2Ele.add(5000000L);
-        param2 = new JComboBox<>(param2Ele);
-        param2.setEditable(true);
+        JLabel activityTimeoutLabel = new JLabel("Activity Timeout:");
+        activityTimeoutTxt = new JTextField("5000000");
+        activityTimeoutTxt.setEditable(true);
 
-        jPanel.add(lbl1);
-        jPanel.add(param1);
+        jPanel.add(flowTimeoutLabel);
+        jPanel.add(flowTimeoutTxt);
         jPanel.add(Box.createHorizontalGlue());
-        jPanel.add(lbl2);
-        jPanel.add(param2);
+        jPanel.add(activityTimeoutLabel);
+        jPanel.add(activityTimeoutTxt);
 
         return jPanel;
     }
@@ -346,8 +340,10 @@ public class FlowOfflinePane extends JPanel{
         long flowTimeout;
         long activityTimeout;
         try {
-            flowTimeout = getComboParameter(param1, param1Ele);
-            activityTimeout = getComboParameter(param2, param2Ele);
+            flowTimeout = Long.parseLong(flowTimeoutTxt.getText());
+                    //getComboParameter(this.flowTimeoutTxt, param1Ele);
+            activityTimeout = Long.parseLong(activityTimeoutTxt.getText());
+                    //getComboParameter(param2, param2Ele);
 
             Map<String, Long> flowCnt = new HashMap<>();
 
