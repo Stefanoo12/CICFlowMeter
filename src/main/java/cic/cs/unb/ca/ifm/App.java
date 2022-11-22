@@ -5,6 +5,8 @@ import cic.cs.unb.ca.guava.GuavaMgr;
 import cic.cs.unb.ca.ifm.ui.MainFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
 import java.awt.*;
 
 public class App {
@@ -18,18 +20,12 @@ public class App {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		/*try {
-			//UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
-		} catch (ClassNotFoundException e1) {
-			e1.printStackTrace();
-		} catch (InstantiationException e1) {
-			e1.printStackTrace();
-		} catch (IllegalAccessException e1) {
-			e1.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e1) {
-			e1.printStackTrace();
-		}*/
+
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ReflectiveOperationException | UnsupportedLookAndFeelException e) {
+			logger.warn("Unable to instantiate system look and feel", e);
+		}
 		
 		EventQueue.invokeLater(() -> {
             try {
