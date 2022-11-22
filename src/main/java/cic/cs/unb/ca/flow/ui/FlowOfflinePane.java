@@ -23,6 +23,8 @@ import java.util.concurrent.Executors;
 
 public class FlowOfflinePane extends JPanel{
     protected static final Logger logger = LoggerFactory.getLogger(FlowOfflinePane.class);
+
+    private static final String UNITS[] = {"ms", "s"};
     private static final Border PADDING = BorderFactory.createEmptyBorder(10,5,10,5);
     private JFileChooser fileChooser;
     private PcapFileFilter pcapChooserFilter;
@@ -41,6 +43,7 @@ public class FlowOfflinePane extends JPanel{
     private JProgressBar fileCntProgress;
 
     private ExecutorService csvWriterThread;
+    private JComboBox<String> flowTimeoutUnitCombo;
 
     public FlowOfflinePane() {
 
@@ -252,8 +255,11 @@ public class FlowOfflinePane extends JPanel{
         activityTimeoutTxt = new JTextField("5000000");
         activityTimeoutTxt.setEditable(true);
 
+        flowTimeoutUnitCombo = new JComboBox<>(UNITS);
+
         jPanel.add(flowTimeoutLabel);
         jPanel.add(flowTimeoutTxt);
+        jPanel.add(flowTimeoutUnitCombo);
         jPanel.add(Box.createHorizontalGlue());
         jPanel.add(activityTimeoutLabel);
         jPanel.add(activityTimeoutTxt);
@@ -341,9 +347,12 @@ public class FlowOfflinePane extends JPanel{
         long activityTimeout;
         try {
             flowTimeout = Long.parseLong(flowTimeoutTxt.getText());
-                    //getComboParameter(this.flowTimeoutTxt, param1Ele);
             activityTimeout = Long.parseLong(activityTimeoutTxt.getText());
-                    //getComboParameter(param2, param2Ele);
+
+            String selectedUnit = UNITS[flowTimeoutUnitCombo.getSelectedIndex()];
+            if(selectedUnit.equals("s")){
+                flowTimeout = flowTimeout * 1000;
+            }
 
             Map<String, Long> flowCnt = new HashMap<>();
 
