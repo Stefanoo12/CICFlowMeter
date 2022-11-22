@@ -22,6 +22,26 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class FlowOfflinePane extends JPanel{
+    enum TimeUnits{
+        MS("ms", 1L),
+        S("s", 1000L);
+        private final String displayName;
+        private final Long factor;
+
+        TimeUnits(String displayName, Long factor){
+            this.displayName = displayName;
+            this.factor = factor;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public Long toMilliSecond(Long value){
+            return this.factor * value;
+        }
+    }
+
     protected static final Logger logger = LoggerFactory.getLogger(FlowOfflinePane.class);
 
     private static final String UNITS[] = {"ms", "s"};
@@ -36,6 +56,7 @@ public class FlowOfflinePane extends JPanel{
     private Vector<File> cmbOutputEle;
 
     private JTextField flowTimeoutTxt;
+    private JComboBox<TimeUnits> flowTimeoutUnitCombo;
     private JTextField activityTimeoutTxt;
 
     private Box progressBox;
@@ -43,7 +64,6 @@ public class FlowOfflinePane extends JPanel{
     private JProgressBar fileCntProgress;
 
     private ExecutorService csvWriterThread;
-    private JComboBox<String> flowTimeoutUnitCombo;
 
     public FlowOfflinePane() {
 
@@ -255,7 +275,7 @@ public class FlowOfflinePane extends JPanel{
         activityTimeoutTxt = new JTextField("5000000");
         activityTimeoutTxt.setEditable(true);
 
-        flowTimeoutUnitCombo = new JComboBox<>(UNITS);
+        flowTimeoutUnitCombo = new JComboBox<>(TimeUnits.values());
 
         jPanel.add(flowTimeoutLabel);
         jPanel.add(flowTimeoutTxt);
@@ -349,10 +369,7 @@ public class FlowOfflinePane extends JPanel{
             flowTimeout = Long.parseLong(flowTimeoutTxt.getText());
             activityTimeout = Long.parseLong(activityTimeoutTxt.getText());
 
-            String selectedUnit = UNITS[flowTimeoutUnitCombo.getSelectedIndex()];
-            if(selectedUnit.equals("s")){
-                flowTimeout = flowTimeout * 1000;
-            }
+            flowTimeout = TimeUnits.values()[flowTimeoutUnitCombo.getSelectedIndex()].toMilliSecond(flowTimeout);
 
             Map<String, Long> flowCnt = new HashMap<>();
 
