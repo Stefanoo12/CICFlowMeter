@@ -58,6 +58,7 @@ public class FlowOfflinePane extends JPanel{
     private JTextField flowTimeoutTxt;
     private JComboBox<TimeUnits> flowTimeoutUnitCombo;
     private JTextField activityTimeoutTxt;
+    private JComboBox<TimeUnits> activityTimeoutUnitCombo;
 
     private Box progressBox;
     private JProgressBar fileProgress;
@@ -276,6 +277,7 @@ public class FlowOfflinePane extends JPanel{
         activityTimeoutTxt.setEditable(true);
 
         flowTimeoutUnitCombo = new JComboBox<>(TimeUnits.values());
+        activityTimeoutUnitCombo = new JComboBox<>(TimeUnits.values());
 
         jPanel.add(flowTimeoutLabel);
         jPanel.add(flowTimeoutTxt);
@@ -283,6 +285,7 @@ public class FlowOfflinePane extends JPanel{
         jPanel.add(Box.createHorizontalGlue());
         jPanel.add(activityTimeoutLabel);
         jPanel.add(activityTimeoutTxt);
+        jPanel.add(activityTimeoutUnitCombo);
 
         return jPanel;
     }
@@ -292,15 +295,15 @@ public class FlowOfflinePane extends JPanel{
         jPanel.setLayout(new BoxLayout(jPanel,BoxLayout.X_AXIS));
         jPanel.setBorder(PADDING);
 
-        JButton btnOK = new JButton("OK");
+        JButton processBtn = new JButton("Process");
         Dimension d = new Dimension(80,36);
-        btnOK.setPreferredSize(d);
-        btnOK.setMaximumSize(d);
-        btnOK.setMinimumSize(d);
+        processBtn.setPreferredSize(d);
+        processBtn.setMaximumSize(d);
+        processBtn.setMinimumSize(d);
         jPanel.add(Box.createHorizontalGlue());
-        jPanel.add(btnOK);
+        jPanel.add(processBtn);
         jPanel.add(Box.createHorizontalGlue());
-        btnOK.addActionListener(actionEvent -> startReadPcap());
+        processBtn.addActionListener(actionEvent -> startReadPcap());
 
         return jPanel;
     }
@@ -368,8 +371,7 @@ public class FlowOfflinePane extends JPanel{
         try {
             flowTimeout = extractMicroseconds(flowTimeoutTxt, flowTimeoutUnitCombo);
 
-            activityTimeout = Long.parseLong(activityTimeoutTxt.getText());
-
+            activityTimeout = extractMicroseconds(activityTimeoutTxt, activityTimeoutUnitCombo);
 
             Map<String, Long> flowCnt = new HashMap<>();
 

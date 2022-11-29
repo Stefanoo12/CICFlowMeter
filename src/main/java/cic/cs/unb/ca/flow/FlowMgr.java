@@ -1,10 +1,15 @@
 package cic.cs.unb.ca.flow;
 
 import cic.cs.unb.ca.Sys;
+import cic.cs.unb.ca.ifm.ui.ListComponents;
+import cic.cs.unb.ca.jnetpcap.FlowFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 public class FlowMgr {
@@ -17,6 +22,16 @@ public class FlowMgr {
 
     private String mFlowSavePath;
     private String mDataPath;
+
+    public List<FlowFeature> getFeatureColumns() {
+        return featureColumns;
+    }
+
+    public void setFeatureColumns(List<FlowFeature> featureColumns) {
+        this.featureColumns = featureColumns;
+    }
+
+    private List<FlowFeature> featureColumns = new ArrayList<>();
 
     private FlowMgr() {
         super();
@@ -36,6 +51,8 @@ public class FlowMgr {
 
         sb.append("daily").append(Sys.FILE_SEP);
         mFlowSavePath = sb.toString();
+
+        Collections.addAll(featureColumns, FlowFeature.values());
 
         return Instance;
     }

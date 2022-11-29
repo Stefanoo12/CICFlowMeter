@@ -6,6 +6,7 @@ import cic.cs.unb.ca.flow.ui.FlowOfflinePane;
 import cic.cs.unb.ca.flow.ui.FlowVisualPane;
 import cic.cs.unb.ca.guava.Event.FlowVisualEvent;
 import cic.cs.unb.ca.guava.GuavaMgr;
+import cic.cs.unb.ca.jnetpcap.FlowFeature;
 import com.google.common.eventbus.Subscribe;
 import swing.common.SwingUtils;
 
@@ -13,6 +14,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.stream.Collectors;
 
 public class MainFrame extends JFrame{
 
@@ -21,8 +24,9 @@ public class MainFrame extends JFrame{
 	private FlowOfflinePane offLinePane;
 	private FlowMonitorPane monitorPane;
 	private FlowVisualPane visualPane;
-	
-	
+	private ListComponents listComponents;
+
+
 	public MainFrame() throws HeadlessException {
 		super("CICFlowMeter");
 		
@@ -88,6 +92,50 @@ public class MainFrame extends JFrame{
         itemVisual.addActionListener(actionEvent -> SwingUtils.setBorderLayoutPane(getContentPane(),visualPane,BorderLayout.CENTER));
         mnAction.add(itemVisual);*/
 
+		JMenu mnSettings = new JMenu("Settings");
+		menuBar.add(mnSettings);
+
+		JMenuItem itemOutputColumns = new JMenuItem("Output Columns");
+		listComponents = new ListComponents();
+		listComponents.addWindowListener(new WindowListener() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				saveSelectedColumns();
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+
+			}
+		});
+		itemOutputColumns.addActionListener(e -> listComponents.setVisible(true));
+		mnSettings.add(itemOutputColumns);
+
         JMenu mnHelp = new JMenu("Help");
 		menuBar.add(mnHelp);
 		
@@ -96,7 +144,15 @@ public class MainFrame extends JFrame{
 		mnHelp.add(itemAbout);
 	}
 
-    @Subscribe
+	private void saveSelectedColumns() {
+		java.util.List<ListComponents.Column> selectedColumns = listComponents.getSelectedColumns();
+		java.util.List<FlowFeature> selectedFeatures = selectedColumns.stream()
+				.map(ListComponents.Column::getFeature)
+				.collect(Collectors.toList());
+		FlowMgr.getInstance().setFeatureColumns(selectedFeatures);
+	}
+
+	@Subscribe
     public void listenGuava(FlowVisualEvent evt) {
         System.out.println("file: " + evt.getCsv_file().getPath());
 

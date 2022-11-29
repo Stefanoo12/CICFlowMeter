@@ -1,12 +1,39 @@
 package cic.cs.unb.ca.ifm.ui;
 
+import cic.cs.unb.ca.jnetpcap.FlowFeature;
+
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
 public class ListComponents extends JFrame implements ActionListener, ItemListener, ListSelectionListener {
+
+    public class Column {
+
+        private final FlowFeature feature;
+        private final String displayName;
+
+        public FlowFeature getFeature() {
+            return feature;
+        }
+        @Override
+        public String toString(){
+            return displayName;
+        }
+
+        public String getDisplayName(){
+            return displayName;
+        }
+
+        public Column(FlowFeature feature, String displayName) {
+            this.feature = feature;
+            this.displayName = displayName;
+        }
+    }
 
     //Border
     private Border borderCenter = BorderFactory.createEmptyBorder(10, 10, 10, 10);
@@ -35,24 +62,28 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
     private JLabel lblSelectedVisible;
     private JLabel lblSelectedVisibleLabel;
 
-    private JList<String> listHidden;
-    private JList<String> listVisible;
+    private JList<Column> listHidden;
+    private JList<Column> listVisible;
 
     //Fonts
     private final Font fontBold = new Font(Font.DIALOG, Font.BOLD, 14);
     private final Font fontPlain = new Font(Font.DIALOG, Font.BOLD, 14);
 
-    private String[] columns =
-            {
-                    "Colonna 1", "Colonna 2"
-            };
+    private Column[] columns;
 
-    private DefaultListModel<String> listModelHidden = new DefaultListModel<>();
-    private DefaultListModel<String> listModelVisible = new DefaultListModel<>();
+    private DefaultListModel<Column> listModelHidden = new DefaultListModel<>();
+    private DefaultListModel<Column> listModelVisible = new DefaultListModel<>();
 
     public ListComponents(){
         super("List Components");
         setFonts();
+
+        columns = new Column[FlowFeature.values().length];
+
+        for(int i = 0; i < FlowFeature.values().length; i++) {
+            FlowFeature feature = FlowFeature.values()[i];
+            columns[i] = new Column(feature, feature.getName());
+        }
 
         //A JPanel is used for the main container
         contents = new JPanel();
@@ -192,7 +223,6 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         setSize(850, 460);
         setResizable(false);
         setLocationRelativeTo(null);
-        setVisible(true);
     }
 
     //Button handler
@@ -223,7 +253,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
             return;
         }
 
-        String addedItem = listHidden.getSelectedValue();
+        Column addedItem = listHidden.getSelectedValue();
 
         //Remove from left list
         listModelHidden.remove(iSelected);
@@ -238,8 +268,8 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
 
         //Find a larger item
         for (int i = 0; i < size; i++) {
-            String item = listModelVisible.elementAt(i);
-            int compare = addedItem.compareToIgnoreCase(item);
+            Column item = listModelVisible.elementAt(i);
+            int compare = addedItem.getDisplayName().compareToIgnoreCase(item.getDisplayName());
             if (compare < 0) {
                 listModelVisible.add(i, addedItem);
                 return;
@@ -251,7 +281,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
     }
     private void addAllItems(){
         listModelVisible.clear();
-        for(String s : columns){
+        for(Column s : columns){
             listModelVisible.addElement(s);
         }
         listModelHidden.clear();
@@ -263,7 +293,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
 
     private void displaySelectedItems(){
         int iSelected;
-        String itemName;
+        Column itemName;
 
         iSelected = listHidden.getSelectedIndex();
         if(iSelected == -1){
@@ -271,7 +301,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         }
         else{
             itemName = listHidden.getSelectedValue();
-            lblSelectedHidden.setText(itemName);
+            lblSelectedHidden.setText(itemName.getDisplayName());
         }
 
         iSelected = listVisible.getSelectedIndex();
@@ -280,7 +310,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         }
         else{
             itemName = listVisible.getSelectedValue();
-            lblSelectedVisible.setText(itemName);
+            lblSelectedVisible.setText(itemName.getDisplayName());
         }
     }
 
@@ -291,7 +321,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
     }*/
 
     private void initHiddenModel(){
-        for(String s : columns){
+        for(Column s : columns){
             listModelHidden.addElement(s);
         }
     }
@@ -306,7 +336,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
             return;
         }
 
-        String removedItem = listVisible.getSelectedValue();
+        Column removedItem = listVisible.getSelectedValue();
 
         //Remove from right list
         listModelVisible.remove(iSelected);
@@ -320,8 +350,8 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         }
 
         for(int i = 0; i< size; i++){
-            String item = listModelHidden.elementAt(i);
-            int compare = removedItem.compareToIgnoreCase(item);
+            Column item = listModelHidden.elementAt(i);
+            int compare = removedItem.getDisplayName().compareToIgnoreCase(item.getDisplayName());
             if(compare < 0){
                 listModelHidden.add(i, removedItem);
                 return;
@@ -359,5 +389,13 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
             displaySelectedItems();
             return;
         }
+    }
+
+    public List<Column> getSelectedColumns(){
+        List<Column> selectedColumns = new ArrayList<>();
+        for(int i = 0; i < listVisible.getModel().getSize(); i++){
+            selectedColumns.add(listVisible.getModel().getElementAt(i));
+        }
+        return selectedColumns;
     }
 }
