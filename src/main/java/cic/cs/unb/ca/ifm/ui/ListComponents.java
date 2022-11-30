@@ -223,6 +223,9 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         setSize(850, 460);
         setResizable(false);
         setLocationRelativeTo(null);
+
+        //TODO: Refactor inizialization
+        addAllItems();
     }
 
     //Button handler

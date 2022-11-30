@@ -423,7 +423,7 @@ public class FlowOfflinePane extends JPanel{
                     fileProgress.setString(msg);
 
                     //write flows to csv file
-                    String header  = FlowFeature.getHeader();
+                    String header  = FlowFeature.getEnabledHeader(FlowMgr.getInstance().getFeatureColumns());
                     csvWriterThread.execute(new InsertCsvRow(header, flow.dumpFlowBasedFeaturesEx(), out.getPath(), fileName+FlowMgr.FLOW_SUFFIX));
                 }
             });

@@ -96,6 +96,7 @@ public class MainFrame extends JFrame{
 		menuBar.add(mnSettings);
 
 		JMenuItem itemOutputColumns = new JMenuItem("Output Columns");
+		//TODO: Selected feature from FLowMgr
 		listComponents = new ListComponents();
 		listComponents.addWindowListener(new WindowListener() {
 			@Override

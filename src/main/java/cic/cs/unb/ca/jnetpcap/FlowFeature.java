@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public enum FlowFeature {
@@ -146,20 +147,24 @@ public enum FlowFeature {
 	}
 	
 	public static String getHeader() {
-		
-		if(HEADER ==null|| HEADER.length()==0) {
-			StringBuilder header = new StringBuilder();
-			
-			for(FlowFeature feature: FlowFeature.values()) {
-				header.append(feature.getName()).append(",");
-			}
-			header.deleteCharAt(header.length()-1);
-			HEADER = header.toString();
-		}
-		return HEADER;
-	}
+        if (HEADER == null || HEADER.length() == 0) {
+            List<FlowFeature> enabledFeatures = Arrays.asList(FlowFeature.values());
+            HEADER = getEnabledHeader(enabledFeatures);
+        }
+        return HEADER;
+    }
 
-	public static List<FlowFeature> getFeatureList() {
+    public static String getEnabledHeader(List<FlowFeature> enabledFeatures) {
+        StringBuilder header = new StringBuilder();
+
+        for (FlowFeature feature : enabledFeatures) {
+            header.append(feature.getName()).append(",");
+        }
+        header.deleteCharAt(header.length() - 1);
+        return header.toString();
+    }
+
+    public static List<FlowFeature> getFeatureList() {
         List<FlowFeature> features = new ArrayList<>();
         features.add(prot);
         for(int i = fl_dur.ordinal(); i<= idl_min.ordinal(); i++) {

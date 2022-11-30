@@ -1,5 +1,6 @@
 package cic.cs.unb.ca.jnetpcap.worker;
 
+import cic.cs.unb.ca.flow.FlowMgr;
 import cic.cs.unb.ca.jnetpcap.*;
 import org.jnetpcap.PcapClosedException;
 import org.slf4j.Logger;
@@ -173,7 +174,7 @@ public class ReadPcapFileWorker extends SwingWorker<List<String>,String> {
                 break;
             }
         }
-        flowGen.dumpLabeledCurrentFlow(saveFileFullPath.getPath(), FlowFeature.getHeader());
+        flowGen.dumpLabeledCurrentFlow(saveFileFullPath.getPath(), FlowFeature.getEnabledHeader(FlowMgr.getInstance().getFeatureColumns()));
 
         long lines = countLines(saveFileFullPath.getPath());
 

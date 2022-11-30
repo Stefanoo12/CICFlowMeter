@@ -1,5 +1,6 @@
 package cic.cs.unb.ca.jnetpcap.worker;
 
+import cic.cs.unb.ca.flow.FlowMgr;
 import cic.cs.unb.ca.jnetpcap.*;
 import org.jnetpcap.PcapClosedException;
 
@@ -94,7 +95,8 @@ public class PcapReader {
             String flowDump = flow.dumpFlowBasedFeaturesEx();
             List<String> flowStringList = new ArrayList<>();
             flowStringList.add(flowDump);
-            InsertCsvRow.insert(FlowFeature.getHeader(),flowStringList,outPath,fileName+ FLOW_SUFFIX);
+            String header = FlowFeature.getEnabledHeader(FlowMgr.getInstance().getFeatureColumns());
+            InsertCsvRow.insert(header, flowStringList, outPath, fileName + FLOW_SUFFIX);
 
             cnt++;
 
