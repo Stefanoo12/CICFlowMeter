@@ -54,6 +54,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
     private JButton btnAddAll;
     private JButton btnRemove;
     private JButton btnRemoveAll;
+    private JButton btnSend;
 
     private JLabel lblListHidden;
     private JLabel lblListVisible;
@@ -75,7 +76,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
     private DefaultListModel<Column> listModelVisible = new DefaultListModel<>();
 
     public ListComponents(){
-        super("List Components");
+        super("Settings Columns");
         setFonts();
 
         columns = new Column[FlowFeature.values().length];
@@ -89,12 +90,13 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         contents = new JPanel();
         contents.setBorder(borderContents);
         contents.setLayout(new BorderLayout());
+        //setSpecificSize(contents, new Dimension(700, 600));
         setContentPane(contents);
 
         //Create and add components
 
         //North region
-        JLabel lblTitle = new JLabel("List Components", SwingConstants.CENTER);
+        JLabel lblTitle = new JLabel("Settings Columns", SwingConstants.CENTER);
         lblTitle.setFont(new Font(Font.DIALOG, Font.BOLD, 18));
         contents.add(lblTitle, BorderLayout.NORTH);
 
@@ -170,27 +172,6 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         //Spacer
         panelCenter.add(Box.createRigidArea(new Dimension(10, 1)));
 
-        /*//Border List
-        lblListBorder = new JLabel("Border");
-        lblListBorder.setAlignmentX(LEFT_ALIGNMENT);*/
-
-        /*initBorderModel();
-        listBorder = new JComboBox<>(listModelBorder);
-        listBorder.setAlignmentX(LEFT_ALIGNMENT);*/
-
-        /*Dimension dimListView = listBorder.getPreferredSize();
-        setSpecificSize(listBorder, new Dimension(200, dimListView.height));*/
-
-        /*lblImage = new JLabel(new ImageIcon());
-        lblImage.setAlignmentX(LEFT_ALIGNMENT);
-        setSpecificSize(lblImage, new Dimension(200, 150));*/
-
-        /*boxListBorder.add(lblListBorder);
-        boxListBorder.add(listBorder);
-        boxListBorder.add(Box.createRigidArea(new Dimension(1,20)));
-        boxListBorder.add(lblImage);
-        panelCenter.add(boxListBorder);*/
-
         contents.add(panelCenter, BorderLayout.CENTER);
 
         //South region
@@ -199,15 +180,18 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         lblSelectedHidden = new JLabel();
         lblSelectedVisibleLabel = new JLabel("Selected visible:");
         lblSelectedVisible = new JLabel();
+        btnSend = new JButton("Send");
         /*lblSelectedBorderLabel = new JLabel("Selected border:");
         lblSelectedBorder = new JLabel();*/
 
-        panelSouth.add(lblSelectedHiddenLabel);
+        /*panelSouth.add(lblSelectedHiddenLabel);
         panelSouth.add(lblSelectedHidden);
         panelSouth.add(Box.createRigidArea(new Dimension(100,1)));
         panelSouth.add(lblSelectedVisibleLabel);
-        panelSouth.add(lblSelectedVisible);
-        panelSouth.add(Box.createRigidArea(new Dimension(100,1)));
+        panelSouth.add(lblSelectedVisible);*/
+        panelSouth.add(btnSend);
+        panelSouth.add(Box.createRigidArea(new Dimension(1, 5)));
+        //panelSouth.add(Box.createRigidArea(new Dimension(100,1)));
         //panelSouth.add(lblSelectedBorderLabel);
         //panelSouth.add(lblSelectedBorder);
         contents.add(panelSouth, BorderLayout.SOUTH);
@@ -217,6 +201,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         btnAddAll.addActionListener(this);
         btnRemove.addActionListener(this);
         btnRemoveAll.addActionListener(this);
+        btnSend.addActionListener(this);
         listHidden.addListSelectionListener(this);
         listVisible.addListSelectionListener(this);
 
@@ -248,6 +233,10 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
             removeAllItems();
             return;
         }
+        if(source == btnSend){
+
+            return;
+        }
     }
 
     private void addItem() {
@@ -262,24 +251,6 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         listModelHidden.remove(iSelected);
         displaySelectedItems();
 
-        //Add to right list
-        int size = listModelVisible.getSize();
-        if (size == 0) {
-            listModelVisible.addElement(addedItem);
-            return;
-        }
-
-        //Find a larger item
-        for (int i = 0; i < size; i++) {
-            Column item = listModelVisible.elementAt(i);
-            int compare = addedItem.getDisplayName().compareToIgnoreCase(item.getDisplayName());
-            if (compare < 0) {
-                listModelVisible.add(i, addedItem);
-                return;
-            }
-        }
-
-        //There was no larger item, add it to the end
         listModelVisible.addElement(addedItem);
     }
     private void addAllItems(){
@@ -346,20 +317,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         displaySelectedItems();
 
         //Add to left list
-        int size = listModelHidden.getSize();
-        if(size == 0){
-            listModelHidden.addElement(removedItem);
-            return;
-        }
-
-        for(int i = 0; i< size; i++){
-            Column item = listModelHidden.elementAt(i);
-            int compare = removedItem.getDisplayName().compareToIgnoreCase(item.getDisplayName());
-            if(compare < 0){
-                listModelHidden.add(i, removedItem);
-                return;
-            }
-        }
+        listModelHidden.addElement(removedItem);
     }
 
     private void removeAllItems(){

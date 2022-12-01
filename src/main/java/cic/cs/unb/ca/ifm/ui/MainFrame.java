@@ -12,9 +12,7 @@ import swing.common.SwingUtils;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.util.stream.Collectors;
 
 public class MainFrame extends JFrame{
@@ -98,40 +96,11 @@ public class MainFrame extends JFrame{
 		JMenuItem itemOutputColumns = new JMenuItem("Output Columns");
 		//TODO: Selected feature from FLowMgr
 		listComponents = new ListComponents();
-		listComponents.addWindowListener(new WindowListener() {
-			@Override
-			public void windowOpened(WindowEvent e) {
 
-			}
-
+		listComponents.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				saveSelectedColumns();
-			}
-
-			@Override
-			public void windowClosed(WindowEvent e) {
-
-			}
-
-			@Override
-			public void windowIconified(WindowEvent e) {
-
-			}
-
-			@Override
-			public void windowDeiconified(WindowEvent e) {
-
-			}
-
-			@Override
-			public void windowActivated(WindowEvent e) {
-
-			}
-
-			@Override
-			public void windowDeactivated(WindowEvent e) {
-
 			}
 		});
 		itemOutputColumns.addActionListener(e -> listComponents.setVisible(true));
