@@ -1,5 +1,6 @@
 package cic.cs.unb.ca.jnetpcap;
 
+import cic.cs.unb.ca.flow.FlowMgr;
 import cic.cs.unb.ca.jnetpcap.worker.FlowGenListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -322,10 +323,8 @@ public class FlowGenerator {
 
             for (BasicFlow flow : currentFlows.values()) {
                 if(flow.packetCount()>1) {
-                    output.write((flow.dumpFlowBasedFeaturesEx() + LINE_SEP).getBytes());
+                    output.write((flow.toCvsLine(FlowMgr.getInstance().getFeatureColumns()) + LINE_SEP).getBytes());
                     total++;
-                }else{
-
                 }
             }
 
