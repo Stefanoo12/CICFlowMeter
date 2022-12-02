@@ -13,6 +13,7 @@ import swing.common.SwingUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class MainFrame extends JFrame{
@@ -94,16 +95,23 @@ public class MainFrame extends JFrame{
 		menuBar.add(mnSettings);
 
 		JMenuItem itemOutputColumns = new JMenuItem("Output Columns");
-		//TODO: Selected feature from FLowMgr
+
 		listComponents = new ListComponents();
 
-		listComponents.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				saveSelectedColumns();
-			}
+		listComponents.setSaveActionListener(columns -> {
+					saveSelectedColumns(columns);
+					listComponents.setVisible(false);
+					return null;
+				}
+		);
+
+		itemOutputColumns.addActionListener(e -> {
+			List<FlowFeature> featureColumns = FlowMgr.getInstance().getFeatureColumns();
+			List<ListComponents.Column> columns = featureColumns.stream().map(flowFeature -> new ListComponents.Column(flowFeature, flowFeature.getName()))
+					.collect(Collectors.toList());
+			listComponents.setSelectedColumns(columns);
+			listComponents.setVisible(true);
 		});
-		itemOutputColumns.addActionListener(e -> listComponents.setVisible(true));
 		mnSettings.add(itemOutputColumns);
 
         JMenu mnHelp = new JMenu("Help");
@@ -114,8 +122,7 @@ public class MainFrame extends JFrame{
 		mnHelp.add(itemAbout);
 	}
 
-	private void saveSelectedColumns() {
-		java.util.List<ListComponents.Column> selectedColumns = listComponents.getSelectedColumns();
+	private void saveSelectedColumns(java.util.List<ListComponents.Column> selectedColumns) {
 		java.util.List<FlowFeature> selectedFeatures = selectedColumns.stream()
 				.map(ListComponents.Column::getFeature)
 				.collect(Collectors.toList());

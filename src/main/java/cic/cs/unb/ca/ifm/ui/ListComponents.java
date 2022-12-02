@@ -6,13 +6,30 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
 public class ListComponents extends JFrame implements ActionListener, ItemListener, ListSelectionListener {
 
-    public class Column {
+    public void setSelectedColumns(List<Column> selectedColumns) {
+        listModelVisible.clear();
+        listModelHidden.clear();
+
+        for (Column column : columns) {
+            if (selectedColumns.contains(column)) {
+                listModelVisible.addElement(column);
+            } else {
+                listModelHidden.addElement(column);
+            }
+        }
+    }
+
+    public static class Column {
 
         private final FlowFeature feature;
         private final String displayName;
@@ -20,12 +37,26 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         public FlowFeature getFeature() {
             return feature;
         }
+
         @Override
-        public String toString(){
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Column column = (Column) o;
+            return feature == column.feature;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(feature);
+        }
+
+        @Override
+        public String toString() {
             return displayName;
         }
 
-        public String getDisplayName(){
+        public String getDisplayName() {
             return displayName;
         }
 
@@ -75,13 +106,19 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
     private DefaultListModel<Column> listModelHidden = new DefaultListModel<>();
     private DefaultListModel<Column> listModelVisible = new DefaultListModel<>();
 
-    public ListComponents(){
+    public void setSaveActionListener(Function<List<Column>, Void> saveActionListener) {
+        this.saveActionListener = Optional.of(saveActionListener);
+    }
+
+    private Optional<Function<List<Column>, Void>> saveActionListener;
+
+    public ListComponents() {
         super("Settings Columns");
         setFonts();
 
         columns = new Column[FlowFeature.values().length];
 
-        for(int i = 0; i < FlowFeature.values().length; i++) {
+        for (int i = 0; i < FlowFeature.values().length; i++) {
             FlowFeature feature = FlowFeature.values()[i];
             columns[i] = new Column(feature, feature.getName());
         }
@@ -208,34 +245,31 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         setSize(850, 460);
         setResizable(false);
         setLocationRelativeTo(null);
-
-        //TODO: Refactor inizialization
-        addAllItems();
     }
 
     //Button handler
     @Override
-    public void actionPerformed(ActionEvent e){
+    public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        if(source == btnAdd){
+        if (source == btnAdd) {
             addItem();
             return;
         }
-        if(source == btnAddAll){
+        if (source == btnAddAll) {
             addAllItems();
             return;
         }
-        if(source == btnRemove){
+        if (source == btnRemove) {
             removeItem();
             return;
         }
-        if(source == btnRemoveAll){
+        if (source == btnRemoveAll) {
             removeAllItems();
             return;
         }
-        if(source == btnSend){
+        if (source == btnSend) {
 
-            return;
+            saveActionListener.ifPresent(listener -> listener.apply(getSelectedColumns()));
         }
     }
 
@@ -253,9 +287,10 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
 
         listModelVisible.addElement(addedItem);
     }
-    private void addAllItems(){
+
+    private void addAllItems() {
         listModelVisible.clear();
-        for(Column s : columns){
+        for (Column s : columns) {
             listModelVisible.addElement(s);
         }
         listModelHidden.clear();
@@ -265,24 +300,22 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
 
     }*/
 
-    private void displaySelectedItems(){
+    private void displaySelectedItems() {
         int iSelected;
         Column itemName;
 
         iSelected = listHidden.getSelectedIndex();
-        if(iSelected == -1){
+        if (iSelected == -1) {
             lblSelectedHidden.setText("");
-        }
-        else{
+        } else {
             itemName = listHidden.getSelectedValue();
             lblSelectedHidden.setText(itemName.getDisplayName());
         }
 
         iSelected = listVisible.getSelectedIndex();
-        if(iSelected == -1){
+        if (iSelected == -1) {
             lblSelectedVisible.setText("");
-        }
-        else{
+        } else {
             itemName = listVisible.getSelectedValue();
             lblSelectedVisible.setText(itemName.getDisplayName());
         }
@@ -294,19 +327,19 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         }
     }*/
 
-    private void initHiddenModel(){
-        for(Column s : columns){
+    private void initHiddenModel() {
+        for (Column s : columns) {
             listModelHidden.addElement(s);
         }
     }
 
-    public void itemStateChanged(ItemEvent e){
+    public void itemStateChanged(ItemEvent e) {
 
     }
 
-    private void removeItem(){
+    private void removeItem() {
         int iSelected = listVisible.getSelectedIndex();
-        if(iSelected == -1){
+        if (iSelected == -1) {
             return;
         }
 
@@ -320,41 +353,41 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         listModelHidden.addElement(removedItem);
     }
 
-    private void removeAllItems(){
+    private void removeAllItems() {
         listModelHidden.clear();
         initHiddenModel();
         listModelVisible.clear();
         displaySelectedItems();
     }
 
-    private void setFonts(){
+    private void setFonts() {
         UIManager.put("Button.font", fontBold);
         UIManager.put("ComboBox.font", fontBold);
         UIManager.put("Label.font", fontBold);
         UIManager.put("List.font", fontPlain);
     }
 
-    private void setSpecificSize(JComponent component, Dimension dimension){
+    private void setSpecificSize(JComponent component, Dimension dimension) {
         component.setMinimumSize(dimension);
         component.setPreferredSize(dimension);
         component.setMaximumSize(dimension);
     }
 
-    public void valueChanged(ListSelectionEvent e){
+    public void valueChanged(ListSelectionEvent e) {
         Object source = e.getSource();
-        if(source == listHidden){
+        if (source == listHidden) {
             displaySelectedItems();
             return;
         }
-        if(source == listVisible){
+        if (source == listVisible) {
             displaySelectedItems();
             return;
         }
     }
 
-    public List<Column> getSelectedColumns(){
+    public List<Column> getSelectedColumns() {
         List<Column> selectedColumns = new ArrayList<>();
-        for(int i = 0; i < listVisible.getModel().getSize(); i++){
+        for (int i = 0; i < listVisible.getModel().getSize(); i++) {
             selectedColumns.add(listVisible.getModel().getElementAt(i));
         }
         return selectedColumns;
