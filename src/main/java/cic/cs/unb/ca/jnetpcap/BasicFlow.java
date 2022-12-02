@@ -63,93 +63,113 @@ public class BasicFlow {
 
     private Map<FlowFeature, Supplier<String>> initGeneratorMap() {
         Map<FlowFeature, Supplier<String>> generatorByFeature = new HashMap<>();
+
         generatorByFeature.put(fid, () -> flowId);
         generatorByFeature.put(src_ip, () -> FormatUtils.ip(src));
         generatorByFeature.put(src_port, () -> String.valueOf(getSrcPort()));
         generatorByFeature.put(dst_ip, () -> FormatUtils.ip(dst));
         generatorByFeature.put(dst_pot, () -> String.valueOf(getDstPort()));
         generatorByFeature.put(prot, () -> String.valueOf(getProtocol()));
+
         generatorByFeature.put(tstp, () -> DateFormatter.convertMilliseconds2String(flowStartTime / 1000L, "dd/MM/yyyy hh:mm:ss.SSS a"));
-        generatorByFeature.put(fl_dur, () -> String.valueOf(flowLastSeen - flowStartTime));
+
+        long flowDuration = flowLastSeen - flowStartTime;
+        generatorByFeature.put(fl_dur, () -> String.valueOf(flowDuration));
+
         generatorByFeature.put(tot_fw_pkt, () -> String.valueOf(fwdPktStats.getN()));
         generatorByFeature.put(tot_bw_pkt, () -> String.valueOf(bwdPktStats.getN()));
         generatorByFeature.put(tot_l_fw_pkt, () -> String.valueOf(fwdPktStats.getSum()));
         generatorByFeature.put(tot_l_bw_pkt, () -> String.valueOf(bwdPktStats.getSum()));
+
         generatorByFeature.put(fw_pkt_l_max, () -> getOrDefault(fwdPktStats.getN() > 0L, fwdPktStats.getMax()));
         generatorByFeature.put(fw_pkt_l_min, () -> getOrDefault(fwdPktStats.getN() > 0L, fwdPktStats.getMin()));
         generatorByFeature.put(fw_pkt_l_avg, () -> getOrDefault(fwdPktStats.getN() > 0L, fwdPktStats.getMean()));
         generatorByFeature.put(fw_pkt_l_std, () -> getOrDefault(fwdPktStats.getN() > 0L, fwdPktStats.getStandardDeviation()));
-        generatorByFeature.put(bw_pkt_l_max, () -> {
+        /*generatorByFeature.put(bw_pkt_l_max, () -> {
             return "";
-        });
-        generatorByFeature.put(bw_pkt_l_min, () -> "");
-        generatorByFeature.put(bw_pkt_l_avg, () -> "");
-        generatorByFeature.put(bw_pkt_l_std, () -> "");
-        generatorByFeature.put(fl_byt_s, () -> "");
-        generatorByFeature.put(fl_pkt_s, () -> "");
-        generatorByFeature.put(fl_iat_avg, () -> "");
-        generatorByFeature.put(fl_iat_std, () -> "");
-        generatorByFeature.put(fl_iat_max, () -> "");
-        generatorByFeature.put(fl_iat_min, () -> "");
-        generatorByFeature.put(fw_iat_tot, () -> "");
-        generatorByFeature.put(fw_iat_avg, () -> "");
-        generatorByFeature.put(fw_iat_std, () -> "");
-        generatorByFeature.put(fw_iat_max, () -> "");
-        generatorByFeature.put(fw_iat_min, () -> "");
-        generatorByFeature.put(bw_iat_tot, () -> "");
-        generatorByFeature.put(bw_iat_avg, () -> "");
-        generatorByFeature.put(bw_iat_std, () -> "");
-        generatorByFeature.put(bw_iat_max, () -> "");
-        generatorByFeature.put(bw_iat_min, () -> "");
-        generatorByFeature.put(fw_psh_flag, () -> "");
-        generatorByFeature.put(bw_psh_flag, () -> "");
-        generatorByFeature.put(fw_urg_flag, () -> "");
-        generatorByFeature.put(bw_urg_flag, () -> "");
-        generatorByFeature.put(fw_hdr_len, () -> "");
-        generatorByFeature.put(bw_hdr_len, () -> "");
-        generatorByFeature.put(fw_pkt_s, () -> "");
-        generatorByFeature.put(bw_pkt_s, () -> "");
-        generatorByFeature.put(pkt_len_min, () -> "");
-        generatorByFeature.put(pkt_len_max, () -> "");
-        generatorByFeature.put(pkt_len_avg, () -> "");
-        generatorByFeature.put(pkt_len_std, () -> "");
-        generatorByFeature.put(pkt_len_var, () -> "");
-        generatorByFeature.put(fin_cnt, () -> "");
-        generatorByFeature.put(syn_cnt, () -> "");
-        generatorByFeature.put(rst_cnt, () -> "");
-        generatorByFeature.put(pst_cnt, () -> "");
-        generatorByFeature.put(ack_cnt, () -> "");
-        generatorByFeature.put(urg_cnt, () -> "");
-        generatorByFeature.put(CWR_cnt, () -> "");
-        generatorByFeature.put(ece_cnt, () -> "");
-        generatorByFeature.put(down_up_ratio, () -> "");
-        generatorByFeature.put(pkt_size_avg, () -> "");
-        generatorByFeature.put(fw_seg_avg, () -> "");
-        generatorByFeature.put(bw_seg_avg, () -> "");
-        generatorByFeature.put(fw_byt_blk_avg, () -> "");
-        generatorByFeature.put(fw_pkt_blk_avg, () -> "");
-        generatorByFeature.put(fw_blk_rate_avg, () -> "");
-        generatorByFeature.put(bw_byt_blk_avg, () -> "");
-        generatorByFeature.put(bw_pkt_blk_avg, () -> "");
-        generatorByFeature.put(bw_blk_rate_avg, () -> "");
-        generatorByFeature.put(subfl_fw_pkt, () -> "");
-        generatorByFeature.put(subfl_fw_byt, () -> "");
-        generatorByFeature.put(subfl_bw_pkt, () -> "");
-        generatorByFeature.put(subfl_bw_byt, () -> "");
-        generatorByFeature.put(fw_win_byt, () -> "");
-        generatorByFeature.put(bw_win_byt, () -> "");
-        generatorByFeature.put(Fw_act_pkt, () -> "");
-        generatorByFeature.put(fw_seg_min, () -> "");
-        generatorByFeature.put(atv_avg, () -> "");
-        generatorByFeature.put(atv_std, () -> "");
-        generatorByFeature.put(atv_max, () -> "");
-        generatorByFeature.put(atv_min, () -> "");
-        generatorByFeature.put(idl_avg, () -> "");
-        generatorByFeature.put(idl_std, () -> "");
-        generatorByFeature.put(idl_max, () -> "");
-        generatorByFeature.put(idl_min, () -> "");
+        });*/
+        generatorByFeature.put(bw_pkt_l_max, () -> getOrDefault(bwdPktStats.getN() > 0L, bwdPktStats.getMax()));
+        generatorByFeature.put(bw_pkt_l_min, () -> getOrDefault(bwdPktStats.getN() > 0L, bwdPktStats.getMin()));
+        generatorByFeature.put(bw_pkt_l_avg, () -> getOrDefault(bwdPktStats.getN() > 0L, bwdPktStats.getMean()));
+        generatorByFeature.put(bw_pkt_l_std, () -> getOrDefault(bwdPktStats.getN() > 0L, bwdPktStats.getStandardDeviation()));
 
-        generatorByFeature.put(Label, () -> "" );
+        generatorByFeature.put(fl_byt_s, () -> String.valueOf(((double) (forwardBytes + backwardBytes)) / ((double) flowDuration / 1000000L)));
+        generatorByFeature.put(fl_pkt_s, () -> String.valueOf(((double) packetCount()) / ((double) flowDuration / 1000000L)));
+        generatorByFeature.put(fl_iat_avg, () -> String.valueOf(flowIAT.getMean()));
+        generatorByFeature.put(fl_iat_std, () -> String.valueOf(flowIAT.getStandardDeviation()));
+        generatorByFeature.put(fl_iat_max, () -> String.valueOf(flowIAT.getMax()));
+        generatorByFeature.put(fl_iat_min, () -> String.valueOf(flowIAT.getMin()));
+
+        generatorByFeature.put(fw_iat_tot, () -> getOrDefault(forward.size() > 1, forwardIAT.getSum()));
+        generatorByFeature.put(fw_iat_avg, () -> getOrDefault(forward.size() > 1, forwardIAT.getMean()));
+        generatorByFeature.put(fw_iat_std, () -> getOrDefault(forward.size() > 1, forwardIAT.getStandardDeviation()));
+        generatorByFeature.put(fw_iat_max, () -> getOrDefault(forward.size() > 1, forwardIAT.getMax()));
+        generatorByFeature.put(fw_iat_min, () -> getOrDefault(forward.size() > 1, forwardIAT.getMin()));
+
+        generatorByFeature.put(bw_iat_tot, () -> getOrDefault(backward.size() > 1, backwardIAT.getSum()));
+        generatorByFeature.put(bw_iat_avg, () -> getOrDefault(backward.size() > 1, backwardIAT.getMean()));
+        generatorByFeature.put(bw_iat_std, () -> getOrDefault(backward.size() > 1, backwardIAT.getStandardDeviation()));
+        generatorByFeature.put(bw_iat_max, () -> getOrDefault(backward.size() > 1, backwardIAT.getMax()));
+        generatorByFeature.put(bw_iat_min, () -> getOrDefault(backward.size() > 1, backwardIAT.getMin()));
+
+        generatorByFeature.put(fw_psh_flag, () -> String.valueOf(fPSH_cnt));
+        generatorByFeature.put(bw_psh_flag, () -> String.valueOf(bPSH_cnt));
+        generatorByFeature.put(fw_urg_flag, () -> String.valueOf(fURG_cnt));
+        generatorByFeature.put(bw_urg_flag, () -> String.valueOf(bURG_cnt));
+
+        generatorByFeature.put(fw_hdr_len, () -> String.valueOf(fHeaderBytes));
+        generatorByFeature.put(bw_hdr_len, () -> String.valueOf(bHeaderBytes));
+        generatorByFeature.put(fw_pkt_s, () -> String.valueOf(getfPktsPerSecond()));
+        generatorByFeature.put(bw_pkt_s, () -> String.valueOf(getbPktsPerSecond()));
+
+        generatorByFeature.put(pkt_len_min, () -> getOrDefault(forward.size() > 0 || backward.size() > 0, flowLengthStats.getMin()));
+        generatorByFeature.put(pkt_len_max, () -> getOrDefault(forward.size() > 0 || backward.size() > 0, flowLengthStats.getMax()));
+        generatorByFeature.put(pkt_len_avg, () -> getOrDefault(forward.size() > 0 || backward.size() > 0, flowLengthStats.getMean()));
+        generatorByFeature.put(pkt_len_std, () -> getOrDefault(forward.size() > 0 || backward.size() > 0, flowLengthStats.getStandardDeviation()));
+        generatorByFeature.put(pkt_len_var, () -> getOrDefault(forward.size() > 0 || backward.size() > 0, flowLengthStats.getVariance()));
+
+        generatorByFeature.put(fin_cnt, () -> String.valueOf(flagCounts.get("FIN").value));
+        generatorByFeature.put(syn_cnt, () -> String.valueOf(flagCounts.get("SYN").value));
+        generatorByFeature.put(rst_cnt, () -> String.valueOf(flagCounts.get("RST").value));
+        generatorByFeature.put(pst_cnt, () -> String.valueOf(flagCounts.get("PSH").value));
+        generatorByFeature.put(ack_cnt, () -> String.valueOf(flagCounts.get("ACK").value));
+        generatorByFeature.put(urg_cnt, () -> String.valueOf(flagCounts.get("URG").value));
+        generatorByFeature.put(CWR_cnt, () -> String.valueOf(flagCounts.get("CWR").value));
+        generatorByFeature.put(ece_cnt, () -> String.valueOf(flagCounts.get("ECE").value));
+
+        generatorByFeature.put(down_up_ratio, () -> String.valueOf(getDownUpRatio()));
+        generatorByFeature.put(pkt_size_avg, () -> String.valueOf(getAvgPacketSize()));
+        generatorByFeature.put(fw_seg_avg, () -> String.valueOf(fAvgSegmentSize()));
+        generatorByFeature.put(bw_seg_avg, () -> String.valueOf(bAvgSegmentSize()));
+
+        generatorByFeature.put(fw_byt_blk_avg, () -> String.valueOf(fAvgBytesPerBulk()));
+        generatorByFeature.put(fw_pkt_blk_avg, () -> String.valueOf(fAvgPacketsPerBulk()));
+        generatorByFeature.put(fw_blk_rate_avg, () -> String.valueOf(fAvgBulkRate()));
+        generatorByFeature.put(bw_byt_blk_avg, () -> String.valueOf(bAvgBytesPerBulk()));
+        generatorByFeature.put(bw_pkt_blk_avg, () -> String.valueOf(bAvgPacketsPerBulk()));
+        generatorByFeature.put(bw_blk_rate_avg, () -> String.valueOf(bAvgBulkRate()));
+
+        generatorByFeature.put(subfl_fw_pkt, () -> String.valueOf(getSflow_fpackets()));
+        generatorByFeature.put(subfl_fw_byt, () -> String.valueOf(getSflow_fbytes()));
+        generatorByFeature.put(subfl_bw_pkt, () -> String.valueOf(getSflow_bpackets()));
+        generatorByFeature.put(subfl_bw_byt, () -> String.valueOf(getSflow_bbytes()));
+
+        generatorByFeature.put(fw_win_byt, () -> String.valueOf(Init_Win_bytes_forward));
+        generatorByFeature.put(bw_win_byt, () -> String.valueOf(Init_Win_bytes_backward));
+        generatorByFeature.put(Fw_act_pkt, () -> String.valueOf(Act_data_pkt_forward));
+        generatorByFeature.put(fw_seg_min, () -> String.valueOf(min_seg_size_forward));
+
+        generatorByFeature.put(atv_avg, () -> getOrDefault(flowActive.getN() > 0, flowActive.getMean()));
+        generatorByFeature.put(atv_std, () -> getOrDefault(flowActive.getN() > 0, flowActive.getStandardDeviation()));
+        generatorByFeature.put(atv_max, () -> getOrDefault(flowActive.getN() > 0, flowActive.getMax()));
+        generatorByFeature.put(atv_min, () -> getOrDefault(flowActive.getN() > 0, flowActive.getMin()));
+
+        generatorByFeature.put(idl_avg, () -> getOrDefault(flowIdle.getN() > 0, flowIdle.getMean()));
+        generatorByFeature.put(idl_std, () -> getOrDefault(flowIdle.getN() > 0, flowIdle.getStandardDeviation()));
+        generatorByFeature.put(idl_max, () -> getOrDefault(flowIdle.getN() > 0, flowIdle.getMax()));
+        generatorByFeature.put(idl_min, () -> getOrDefault(flowIdle.getN() > 0, flowIdle.getMin()));
+
+        generatorByFeature.put(Label, () -> getLabel());
 
         return generatorByFeature;
     }
@@ -1197,10 +1217,13 @@ public class BasicFlow {
         for (FlowFeature feature : features) {
             Supplier<String> generator = generatorByFeature.get(feature);
             if (generator != null) {
-                csvLine.append(generator.get()).append(separator);
+                if (feature.equals(features.get(features.size() - 1))) {
+                    csvLine.append(generator.get());
+                } else {
+                    csvLine.append(generator.get()).append(separator);
+                }
             }
         }
-
         return csvLine.toString();
     }
 
