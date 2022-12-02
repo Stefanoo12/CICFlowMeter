@@ -8,13 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.event.*;
 
-public class ListComponents extends JFrame implements ActionListener, ItemListener, ListSelectionListener {
+public class ColumnsSelectionFrame extends JFrame implements ActionListener, ItemListener, ListSelectionListener {
 
     public void setSelectedColumns(List<Column> selectedColumns) {
         listModelVisible.clear();
@@ -85,7 +84,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
     private JButton btnAddAll;
     private JButton btnRemove;
     private JButton btnRemoveAll;
-    private JButton btnSend;
+    private JButton btnSave;
 
     private JLabel lblListHidden;
     private JLabel lblListVisible;
@@ -112,8 +111,8 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
 
     private Optional<Function<List<Column>, Void>> saveActionListener;
 
-    public ListComponents() {
-        super("Settings Columns");
+    public ColumnsSelectionFrame() {
+        super("Output Columns");
         setFonts();
 
         columns = new Column[FlowFeature.values().length];
@@ -133,7 +132,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         //Create and add components
 
         //North region
-        JLabel lblTitle = new JLabel("Settings Columns", SwingConstants.CENTER);
+        JLabel lblTitle = new JLabel("Columns Settings", SwingConstants.CENTER);
         lblTitle.setFont(new Font(Font.DIALOG, Font.BOLD, 18));
         contents.add(lblTitle, BorderLayout.NORTH);
 
@@ -143,7 +142,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
 
         //Hidden list
         //To left-align components in a vertical box, they must each be given left alignment
-        lblListHidden = new JLabel("Hidden:");
+        lblListHidden = new JLabel("Columns");
         lblListHidden.setAlignmentX(LEFT_ALIGNMENT);
 
         initHiddenModel();
@@ -189,7 +188,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         panelCenter.add(Box.createRigidArea(new Dimension(10, 1)));
 
         //Visible List
-        lblListVisible = new JLabel("Visible:");
+        lblListVisible = new JLabel("Selected Columns");
         lblListVisible.setAlignmentX(LEFT_ALIGNMENT);
 
         listVisible = new JList<>(listModelVisible);
@@ -217,20 +216,10 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         lblSelectedHidden = new JLabel();
         lblSelectedVisibleLabel = new JLabel("Selected visible:");
         lblSelectedVisible = new JLabel();
-        btnSend = new JButton("Send");
-        /*lblSelectedBorderLabel = new JLabel("Selected border:");
-        lblSelectedBorder = new JLabel();*/
+        btnSave = new JButton("Save");
 
-        /*panelSouth.add(lblSelectedHiddenLabel);
-        panelSouth.add(lblSelectedHidden);
-        panelSouth.add(Box.createRigidArea(new Dimension(100,1)));
-        panelSouth.add(lblSelectedVisibleLabel);
-        panelSouth.add(lblSelectedVisible);*/
-        panelSouth.add(btnSend);
+        panelSouth.add(btnSave);
         panelSouth.add(Box.createRigidArea(new Dimension(1, 5)));
-        //panelSouth.add(Box.createRigidArea(new Dimension(100,1)));
-        //panelSouth.add(lblSelectedBorderLabel);
-        //panelSouth.add(lblSelectedBorder);
         contents.add(panelSouth, BorderLayout.SOUTH);
 
         //Register event handlers
@@ -238,7 +227,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
         btnAddAll.addActionListener(this);
         btnRemove.addActionListener(this);
         btnRemoveAll.addActionListener(this);
-        btnSend.addActionListener(this);
+        btnSave.addActionListener(this);
         listHidden.addListSelectionListener(this);
         listVisible.addListSelectionListener(this);
 
@@ -267,7 +256,7 @@ public class ListComponents extends JFrame implements ActionListener, ItemListen
             removeAllItems();
             return;
         }
-        if (source == btnSend) {
+        if (source == btnSave) {
 
             saveActionListener.ifPresent(listener -> listener.apply(getSelectedColumns()));
         }

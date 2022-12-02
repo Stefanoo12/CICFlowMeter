@@ -23,7 +23,7 @@ public class MainFrame extends JFrame{
 	private FlowOfflinePane offLinePane;
 	private FlowMonitorPane monitorPane;
 	private FlowVisualPane visualPane;
-	private ListComponents listComponents;
+	private ColumnsSelectionFrame listComponents;
 
 
 	public MainFrame() throws HeadlessException {
@@ -96,7 +96,7 @@ public class MainFrame extends JFrame{
 
 		JMenuItem itemOutputColumns = new JMenuItem("Output Columns");
 
-		listComponents = new ListComponents();
+		listComponents = new ColumnsSelectionFrame();
 
 		listComponents.setSaveActionListener(columns -> {
 					saveSelectedColumns(columns);
@@ -107,7 +107,7 @@ public class MainFrame extends JFrame{
 
 		itemOutputColumns.addActionListener(e -> {
 			List<FlowFeature> featureColumns = FlowMgr.getInstance().getFeatureColumns();
-			List<ListComponents.Column> columns = featureColumns.stream().map(flowFeature -> new ListComponents.Column(flowFeature, flowFeature.getName()))
+			List<ColumnsSelectionFrame.Column> columns = featureColumns.stream().map(flowFeature -> new ColumnsSelectionFrame.Column(flowFeature, flowFeature.getName()))
 					.collect(Collectors.toList());
 			listComponents.setSelectedColumns(columns);
 			listComponents.setVisible(true);
@@ -122,9 +122,9 @@ public class MainFrame extends JFrame{
 		mnHelp.add(itemAbout);
 	}
 
-	private void saveSelectedColumns(java.util.List<ListComponents.Column> selectedColumns) {
+	private void saveSelectedColumns(java.util.List<ColumnsSelectionFrame.Column> selectedColumns) {
 		java.util.List<FlowFeature> selectedFeatures = selectedColumns.stream()
-				.map(ListComponents.Column::getFeature)
+				.map(ColumnsSelectionFrame.Column::getFeature)
 				.collect(Collectors.toList());
 		FlowMgr.getInstance().setFeatureColumns(selectedFeatures);
 	}

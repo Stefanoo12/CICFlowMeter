@@ -1,7 +1,6 @@
 package cic.cs.unb.ca.flow;
 
 import cic.cs.unb.ca.Sys;
-import cic.cs.unb.ca.ifm.ui.ListComponents;
 import cic.cs.unb.ca.jnetpcap.FlowFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
